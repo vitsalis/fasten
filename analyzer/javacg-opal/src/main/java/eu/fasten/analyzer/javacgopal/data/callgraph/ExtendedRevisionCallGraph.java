@@ -163,21 +163,21 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
         var graph = partialCallGraph.toURIGraph();
 
         logger.info("All edges of the graph have been converted to URIs.");
-        logger.info("Cleaning the opal call graph from memory ...");
+        //logger.info("Cleaning the opal call graph from memory ...");
 
-        partialCallGraph.clearGraph();
+        //partialCallGraph.clearGraph();
 
-        logger.info("The Opal call graph has been removed from memory.");
+        //logger.info("The Opal call graph has been removed from memory.");
         logger.info("Converting class hierarchy to URIs ...");
 
         var classHierarcy = PartialCallGraph.toURIHierarchy(partialCallGraph.getClassHierarchy());
 
         logger.info("All entities of the class hierarchy have been converted to URIs.");
-        logger.info("Cleaning the opal call class hierarchy from memory ...");
+        //logger.info("Cleaning the opal call class hierarchy from memory ...");
 
-        partialCallGraph.clearClassHierarchy();
+        //partialCallGraph.clearClassHierarchy();
 
-        logger.info("The Opal call class hierarchy has been removed from memory.");
+        //logger.info("The Opal call class hierarchy has been removed from memory.");
         logger.info("Building the extended revision call graph ...");
 
         return new ExtendedRevisionCallGraph(forge,
