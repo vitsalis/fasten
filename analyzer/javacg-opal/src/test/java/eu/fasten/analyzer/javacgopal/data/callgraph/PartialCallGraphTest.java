@@ -205,12 +205,12 @@ public class PartialCallGraphTest {
 
         assertEquals(
                 new ArrayList<>(),
-                PartialCallGraph.toURIHierarchy(callgraph.getClassHierarchy()).get(new FastenJavaURI("/name.space/SingleSourceToTarget")).getSuperInterfaces()
+                PartialCallGraph.toURIHierarchy(callgraph.getClassHierarchy()).get(new FastenJavaURI("/name.space/SingleSourceToTarget")).getSuperInterfacesFURI()
         );
 
         assertEquals(
                 Arrays.asList(new FastenJavaURI("/java.lang/Object")),
-                PartialCallGraph.toURIHierarchy(callgraph.getClassHierarchy()).get(new FastenJavaURI("/name.space/SingleSourceToTarget")).getSuperClasses()
+                PartialCallGraph.toURIHierarchy(callgraph.getClassHierarchy()).get(new FastenJavaURI("/name.space/SingleSourceToTarget")).getSuperClassesFURI()
         );
 
     }

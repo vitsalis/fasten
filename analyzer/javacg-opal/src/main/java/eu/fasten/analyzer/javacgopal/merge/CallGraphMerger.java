@@ -47,7 +47,7 @@ public class CallGraphMerger {
         for (FastenURI[] fastenURIS : artifact.graph) {
             var source = fastenURIS[0];
             var target = fastenURIS[1];
-            var isSuperClassMethod = artifact.getClassHierarchy().get(getTypeURI(source)).getSuperClasses().contains(getTypeURI(target));
+            var isSuperClassMethod = artifact.getClassHierarchy().get(getTypeURI(source)).getSuperClassesFURI().contains(getTypeURI(target));
             nextCall:
 
             //Foreach unresolved call
@@ -58,12 +58,12 @@ public class CallGraphMerger {
                     nextDependency:
                     //Check whether this method is inside the dependency
                     if (dependency.getClassHierarchy().containsKey(getTypeURI(target))) {
-                        if (dependency.getClassHierarchy().get(getTypeURI(target)).getMethods().contains(FastenURI.create(target.getRawPath()))) {
+                        if (dependency.getClassHierarchy().get(getTypeURI(target)).getMethodsFURI().contains(FastenURI.create(target.getRawPath()))) {
                             var resolvedMethod = target.toString().replace("///","//" + dependency.product + "/");
                             //Check if this call is related to a super class
                             if (isSuperClassMethod) {
                                 //Find that super class. in case there are two, pick the first one since the order of instantiation matters
-                                for (FastenURI superClass : artifact.getClassHierarchy().get(getTypeURI(source)).getSuperClasses()) {
+                                for (FastenURI superClass : artifact.getClassHierarchy().get(getTypeURI(source)).getSuperClassesFURI()) {
                                     //Check if this dependency contains the super class that we want
                                     if (dependency.getClassHierarchy().containsKey(superClass)) {
                                         fastenURIS[1] = new FastenJavaURI(resolvedMethod);

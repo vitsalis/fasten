@@ -78,7 +78,7 @@ public class OPALPlugin extends Plugin {
          *                }
          */
         @Override
-        public void consume(String topic, ConsumerRecord<String, String> kafkaRecord){
+        public void consume(final String topic, final ConsumerRecord<String, String> kafkaRecord){
 
             try {
 
@@ -197,7 +197,7 @@ public class OPALPlugin extends Plugin {
         @Override
         public void freeResource() {
             if(this.lastCallGraphGenerated != null){
-                this.lastCallGraphGenerated.clear(true);
+                this.lastCallGraphGenerated.clear();
                 this.lastCallGraphGenerated = null;
             }
         }

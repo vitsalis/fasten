@@ -21,6 +21,7 @@ package eu.fasten.analyzer.javacgopal.data.callgraph;
 import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
 import eu.fasten.core.data.FastenURI;
 import eu.fasten.core.data.RevisionCallGraph;
+import eu.fasten.analyzer.javacgopal.data.Type;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -45,77 +46,56 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
         this.classHierarchy = classHierarchy;
     }
 
-    /**
-     * Removes the content of the revision call graph.
-     * @param excessiveRemove if it is true method will go through all the content
-     *                        of the revision call graph and remove them one by one.
-     *                        if false general references will be null.
-     */
-    public void clear(Boolean excessiveRemove) {
-        if (excessiveRemove) {
-            this.graph.parallelStream().forEach(i -> {
-                i[0] = null;
-                i[1] = null;
-            });
+//
 
-            this.classHierarchy.forEach((fastenURI, type) -> {
-                fastenURI = null;
-                type.methods.parallelStream().forEach(i -> i = null);
-                type.superClasses.parallelStream().forEach(i -> i = null);
-                type.superInterfaces.parallelStream().forEach(i -> i = null);
-            });
-            this.classHierarchy.clear();
-        } else {
-            this.graph = null;
-            this.classHierarchy = null;
-        }
-    }
+
     public void clear() {
-        clear(false);
+        this.graph = null;
+        this.classHierarchy = null;
     }
 
 
     /**
      * Type can be a class or interface that inherits (implements) from others or implements methods.
      */
-    public static class Type {
-        //Methods that this type implements
-        private List<FastenURI> methods;
-        //Classes that this type inherits from in the order of instantiation.
-        private LinkedList<FastenURI> superClasses;
-        //Interfaces that this type or its super classes implement.
-        private List<FastenURI> superInterfaces;
-
-        public List<FastenURI> getMethods() {
-            return methods;
-        }
-
-        public LinkedList<FastenURI> getSuperClasses() {
-            return superClasses;
-        }
-
-        public List<FastenURI> getSuperInterfaces() {
-            return superInterfaces;
-        }
-
-        public void setMethods(List<FastenURI> methods) {
-            this.methods = methods;
-        }
-
-        public void setSuperClasses(LinkedList<FastenURI> superClasses) {
-            this.superClasses = superClasses;
-        }
-
-        public void setSuperInterfaces(List<FastenURI> superInterfaces) {
-            this.superInterfaces = superInterfaces;
-        }
-
-        public Type(List<FastenURI> methods, LinkedList<FastenURI> superClasses, List<FastenURI> superInterfaces) {
-            this.methods = methods;
-            this.superClasses = superClasses;
-            this.superInterfaces = superInterfaces;
-        }
-    }
+//    public class Type {
+//        //Methods that this type implements
+//        private List<FastenURI> methods;
+//        //Classes that this type inherits from in the order of instantiation.
+//        private LinkedList<FastenURI> superClasses;
+//        //Interfaces that this type or its super classes implement.
+//        private List<FastenURI> superInterfaces;
+//
+//        public List<FastenURI> getMethods() {
+//            return methods;
+//        }
+//
+//        public LinkedList<FastenURI> getSuperClasses() {
+//            return superClasses;
+//        }
+//
+//        public List<FastenURI> getSuperInterfaces() {
+//            return superInterfaces;
+//        }
+//
+//        public void setMethods(List<FastenURI> methods) {
+//            this.methods = methods;
+//        }
+//
+//        public void setSuperClasses(LinkedList<FastenURI> superClasses) {
+//            this.superClasses = superClasses;
+//        }
+//
+//        public void setSuperInterfaces(List<FastenURI> superInterfaces) {
+//            this.superInterfaces = superInterfaces;
+//        }
+//
+//        public Type(List<FastenURI> methods, LinkedList<FastenURI> superClasses, List<FastenURI> superInterfaces) {
+//            this.methods = methods;
+//            this.superClasses = superClasses;
+//            this.superInterfaces = superInterfaces;
+//        }
+//    }
 
     public ExtendedRevisionCallGraph(String forge, String product, String version, long timestamp, List<List<Dependency>> depset, ArrayList<FastenURI[]> graph, Map<FastenURI, Type> classHierarchy) {
         super(forge, product, version, timestamp, depset, graph);
@@ -140,9 +120,9 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
 
             final JSONObject typeJSON = new JSONObject();
 
-            typeJSON.put("methods", toListOfString(type.methods));
-            typeJSON.put("superClasses", toListOfString(type.superClasses));
-            typeJSON.put("superInterfaces", toListOfString(type.superInterfaces));
+            typeJSON.put("methods", toListOfString(type.getMethodsFURI()));
+            typeJSON.put("superClasses", toListOfString(type.getSuperClassesFURI()));
+            typeJSON.put("superInterfaces", toListOfString(type.getSuperInterfacesFURI()));
 
             chaJSON.put(clas.toString(), typeJSON);
         });

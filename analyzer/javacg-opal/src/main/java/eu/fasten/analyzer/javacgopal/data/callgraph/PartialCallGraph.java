@@ -276,9 +276,9 @@ public class PartialCallGraph {
      * @param classHierarchy Map<org.obalj.br.ObjectType, eu.fasten.analyzer.javacgopal.data.Type>
      * @return Map<eu.fasten.core.data.FastenURI, eu.fasten.analyzer.javacgopal.graph.ExtendedRevisionCallGraph.Type>
      */
-    public static Map<FastenURI, ExtendedRevisionCallGraph.Type> toURIHierarchy(Map<ObjectType, Type> classHierarchy) {
+    public static Map<FastenURI, Type> toURIHierarchy(Map<ObjectType, Type> classHierarchy) {
 
-        Map<FastenURI, ExtendedRevisionCallGraph.Type> URIclassHierarchy = new HashMap<>();
+        Map<FastenURI, Type> URIclassHierarchy = new HashMap<>();
 
         for (ObjectType aClass : classHierarchy.keySet()) {
 
@@ -294,7 +294,7 @@ public class PartialCallGraph {
 
                 URIclassHierarchy.put(
                 Method.getTypeURI(aClass),
-                new ExtendedRevisionCallGraph.Type(
+                new Type(
                     toURIMethods(type.getMethods()),
                     superClassesURIs,
                     toURIInterfaces(type.getSuperInterfaces())
