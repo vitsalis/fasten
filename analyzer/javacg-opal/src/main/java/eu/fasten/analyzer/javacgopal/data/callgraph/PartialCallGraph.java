@@ -18,11 +18,7 @@
 
 package eu.fasten.analyzer.javacgopal.data.callgraph;
 
-import eu.fasten.analyzer.javacgopal.data.Method;
-import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
-import eu.fasten.analyzer.javacgopal.data.ResolvedCall;
-import eu.fasten.analyzer.javacgopal.data.Type;
-import eu.fasten.analyzer.javacgopal.data.UnresolvedCall;
+import eu.fasten.analyzer.javacgopal.data.*;
 import eu.fasten.analyzer.javacgopal.scalawrapper.JavaToScalaConverter;
 import eu.fasten.analyzer.javacgopal.scalawrapper.ScalaFunction2;
 import eu.fasten.core.data.RevisionCallGraph;
@@ -69,9 +65,9 @@ public class PartialCallGraph {
      * ClassHierarchy of the under investigation artifact.
      * For every class in the form of org.opalj.br.ObjectType it specify a single eu.fasten.analyzer.javacgopal.data.Type.
      */
-    private Map<ObjectType, Type> classHierarchy;
+    private Map<ObjectType, TypeOPAL> classHierarchy;
 
-    public PartialCallGraph(List<UnresolvedCall> unresolvedCalls, List<ResolvedCall> ResolvedCalls, Map<ObjectType, Type> classHierarchy) {
+    public PartialCallGraph(List<UnresolvedCall> unresolvedCalls, List<ResolvedCall> ResolvedCalls, Map<ObjectType, TypeOPAL> classHierarchy) {
         this.unresolvedCalls = unresolvedCalls;
         this.resolvedCalls = ResolvedCalls;
         this.classHierarchy = classHierarchy;
@@ -121,7 +117,7 @@ public class PartialCallGraph {
         libraryClasses.removeAll(currentArtifactClasses);
 
         for (ObjectType currentClass : currentArtifactClasses) {
-            Type type = new Type();
+            TypeOPAL type = new TypeOPAL();
             type.setSupers(artifactInOpalFormat.classHierarchy(), currentClass);
             type.getMethods().addAll(allMethods.get(currentClass));
             this.classHierarchy.put(currentClass, type);
@@ -175,7 +171,7 @@ public class PartialCallGraph {
         return resolvedCalls;
     }
 
-    public Map<ObjectType, Type> getClassHierarchy() {
+    public Map<ObjectType, TypeOPAL> getClassHierarchy() {
         return classHierarchy;
     }
 
@@ -276,9 +272,9 @@ public class PartialCallGraph {
      * @param classHierarchy Map<org.obalj.br.ObjectType, eu.fasten.analyzer.javacgopal.data.Type>
      * @return Map<eu.fasten.core.data.FastenURI, eu.fasten.analyzer.javacgopal.graph.ExtendedRevisionCallGraph.Type>
      */
-    public static Map<FastenURI, Type> toURIHierarchy(Map<ObjectType, Type> classHierarchy) {
+    public static Map<FastenURI, TypeURI> toURIHierarchy(Map<ObjectType, TypeOPAL> classHierarchy) {
 
-        Map<FastenURI, Type> URIclassHierarchy = new HashMap<>();
+        Map<FastenURI, TypeURI> URIclassHierarchy = new HashMap<>();
 
         for (ObjectType aClass : classHierarchy.keySet()) {
 
@@ -294,7 +290,7 @@ public class PartialCallGraph {
 
                 URIclassHierarchy.put(
                 Method.getTypeURI(aClass),
-                new Type(
+                new TypeURI(
                     toURIMethods(type.getMethods()),
                     superClassesURIs,
                     toURIInterfaces(type.getSuperInterfaces())

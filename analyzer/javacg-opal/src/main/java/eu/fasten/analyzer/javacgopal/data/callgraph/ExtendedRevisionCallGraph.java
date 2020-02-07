@@ -19,9 +19,9 @@
 package eu.fasten.analyzer.javacgopal.data.callgraph;
 
 import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
+import eu.fasten.analyzer.javacgopal.data.TypeURI;
 import eu.fasten.core.data.FastenURI;
 import eu.fasten.core.data.RevisionCallGraph;
-import eu.fasten.analyzer.javacgopal.data.Type;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -36,18 +36,17 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
 
     private static Logger logger = LoggerFactory.getLogger(ExtendedRevisionCallGraph.class);
 
-    private Map<FastenURI, Type> classHierarchy;
+    private Map<FastenURI, TypeURI> classHierarchy;
 
-    public Map<FastenURI, Type> getClassHierarchy() {
+    public Map<FastenURI, TypeURI> getClassHierarchy() {
         return classHierarchy;
     }
 
-    public void setClassHierarchy(Map<FastenURI, Type> classHierarchy) {
+    public void setClassHierarchy(Map<FastenURI, TypeURI> classHierarchy) {
         this.classHierarchy = classHierarchy;
     }
 
 //
-
 
     public void clear() {
         this.graph = null;
@@ -97,7 +96,7 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
 //        }
 //    }
 
-    public ExtendedRevisionCallGraph(String forge, String product, String version, long timestamp, List<List<Dependency>> depset, ArrayList<FastenURI[]> graph, Map<FastenURI, Type> classHierarchy) {
+    public ExtendedRevisionCallGraph(String forge, String product, String version, long timestamp, List<List<Dependency>> depset, ArrayList<FastenURI[]> graph, Map<FastenURI, TypeURI> classHierarchy) {
         super(forge, product, version, timestamp, depset, graph);
         this.classHierarchy = classHierarchy;
     }
@@ -121,8 +120,8 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
             final JSONObject typeJSON = new JSONObject();
 
             typeJSON.put("methods", toListOfString(type.getMethodsFURI()));
-            typeJSON.put("superClasses", toListOfString(type.getSuperClassesFURI()));
-            typeJSON.put("superInterfaces", toListOfString(type.getSuperInterfacesFURI()));
+            typeJSON.put("superClasses", toListOfString(type.getSuperClassesURI()));
+            typeJSON.put("superInterfaces", toListOfString(type.getSuperInterfacesURI()));
 
             chaJSON.put(clas.toString(), typeJSON);
         });

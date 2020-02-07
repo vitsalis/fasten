@@ -104,111 +104,44 @@ import org.slf4j.LoggerFactory;
 //    }
 //}
 
-public class Type {
 
-    private static Logger logger = LoggerFactory.getLogger(Type.class);
+public class TypeURI {
 
     //Methods that this type implements
-    private List<FastenURI> methodsFURI;
+    private List<FastenURI> methodsURI;
     //Classes that this type inherits from in the order of instantiation.
-    private LinkedList<FastenURI> superClassesFURI;
+    private LinkedList<FastenURI> superClassesURI;
     //Interfaces that this type or its super classes implement.
-    private List<FastenURI> superInterfacesFURI;
+    private List<FastenURI> superInterfacesURI;
 
-    private List<Method> methods;
-    private Chain<ObjectType> superClasses;
-    private List<ObjectType> superInterfaces;
 
     public List<FastenURI> getMethodsFURI() {
-        return methodsFURI;
+        return methodsURI;
     }
 
-    public LinkedList<FastenURI> getSuperClassesFURI() {
-        return superClassesFURI;
+    public LinkedList<FastenURI> getSuperClassesURI() {
+        return superClassesURI;
     }
 
-    public List<FastenURI> getSuperInterfacesFURI() {
-        return superInterfacesFURI;
-    }
-
-    public List<Method> getMethods() {
-        return methods;
-    }
-
-    public Chain<ObjectType> getSuperClasses() {
-        return superClasses;
-    }
-
-    public List<ObjectType> getSuperInterfaces() {
-        return superInterfaces;
+    public List<FastenURI> getSuperInterfacesURI() {
+        return superInterfacesURI;
     }
 
     public void setMethodsFURI(List<FastenURI> methods) {
-        this.methodsFURI = methods;
+        this.methodsURI = methods;
     }
 
     public void setSuperClassesFURI(LinkedList<FastenURI> superClasses) {
-        this.superClassesFURI = superClasses;
+        this.superClassesURI = superClasses;
     }
 
     public void setSuperInterfacesFURI(List<FastenURI> superInterfaces) {
-        this.superInterfacesFURI = superInterfaces;
+        this.superInterfacesURI = superInterfaces;
     }
 
-    public void setMethods(List<Method> methods) {
-        this.methods = methods;
+    public TypeURI(List<FastenURI> methods, LinkedList<FastenURI> superClasses, List<FastenURI> superInterfaces) {
+        this.methodsURI = methods;
+        this.superClassesURI = superClasses;
+        this.superInterfacesURI = superInterfaces;
     }
-
-    public void setSuperClasses(Chain<ObjectType> superClasses) {
-        this.superClasses = superClasses;
-    }
-
-    public void setSuperInterfaces(List<ObjectType> superInterfaces) {
-        this.superInterfaces = superInterfaces;
-    }
-
-    public Type(List<FastenURI> methods, LinkedList<FastenURI> superClasses, List<FastenURI> superInterfaces) {
-        this.methodsFURI = methods;
-        this.superClassesFURI = superClasses;
-        this.superInterfacesFURI = superInterfaces;
-    }
-
-    public Type() {
-        this.methods = new ArrayList<>();
-        this.superClasses = null;
-        this.superInterfaces = new ArrayList<>();
-    }
-
-        /**
-     * Sets super classes and super interfaces of this type
-     *
-     * @param classHierarchy org.opalj.br.ClassHierarchy
-     * @param currentClass org.opalj.br.ObjectType. The type that its supper types should be set.
-     */
-    public void setSupers(ClassHierarchy classHierarchy, ObjectType currentClass) {
-
-        if (classHierarchy.supertypes().contains(currentClass)) {
-
-            try {
-                this.superClasses = classHierarchy.allSuperclassTypesInInitializationOrder(currentClass).s();
-            } catch (NoSuchElementException e) {
-                logger.error("This type {} doesn't have allSuperclassTypesInInitializationOrder method.", currentClass, e);
-            } catch (OutOfMemoryError e) {
-                logger.error("This type {} made an out of memory Exception in calculation of its supper types!", currentClass, e);
-            } catch (Exception e) {
-                logger.error("This type made an Exception in calculation of its supper types!", e);
-            }
-
-            if (superClasses != null) {
-                superClasses.reverse();
-            }
-
-            classHierarchy.allSuperinterfacetypes(currentClass, false).foreach(
-                JavaToScalaConverter.asScalaFunction1(anInterface -> this.superInterfaces.add((ObjectType) anInterface))
-            );
-        }else {
-            logger.warn("Opal class hierarchy didn't include super types of {}", currentClass);
-        }
-    }
-
 }
