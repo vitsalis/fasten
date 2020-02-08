@@ -58,15 +58,14 @@ public class OPALPluginTest {
                 "    \"date\":\"1574072773\"\n" +
                 "}");
 
-        opalPlugin.consume(topic, new ConsumerRecord<>(topic, 1, 0, "foo", coordinateJSON.toString()));
+        var cg = opalPlugin.consume(new ConsumerRecord<>(topic, 1, 0, "foo", coordinateJSON.toString()), false);
 
         var extendedRevisionCallGraph  = ExtendedRevisionCallGraph.create("mvn",
                 new MavenCoordinate("org.slf4j", "slf4j-api", "1.7.29"), 1574072773,
                 new PartialCallGraph(MavenCoordinate.MavenResolver.downloadJar("org.slf4j:slf4j-api:1.7.29").orElseThrow(RuntimeException::new))
         );
 
-        JSONAssert.assertEquals(extendedRevisionCallGraph.toJSON(), opalPlugin.lastCallGraphGenerated.toJSON(), false);
-
+        JSONAssert.assertEquals(extendedRevisionCallGraph.toJSON(), cg.toJSON(), false);
     }
 
     @Test
@@ -79,15 +78,14 @@ public class OPALPluginTest {
                 "    \"date\":\"1574072773\"\n" +
                 "}");
 
-        opalPlugin.consume(topic, new ConsumerRecord<>(topic, 1, 0, "foo", coordinateJSON1.toString()));
+        var cg = opalPlugin.consume(new ConsumerRecord<>(topic, 1, 0, "foo", coordinateJSON1.toString()), false);
 
         var extendedRevisionCallGraph = ExtendedRevisionCallGraph.create("mvn",
                 new MavenCoordinate("com.zarbosoft", "coroutines-core", "0.0.3"), 1574072773,
                 new PartialCallGraph(MavenCoordinate.MavenResolver.downloadJar("com.zarbosoft:coroutines-core:0.0.3").orElseThrow(RuntimeException::new))
         );
 
-        JSONAssert.assertEquals(extendedRevisionCallGraph.toJSON(), opalPlugin.lastCallGraphGenerated.toJSON(), false);
-
+        JSONAssert.assertEquals(extendedRevisionCallGraph.toJSON(), cg.toJSON(), false);
     }
 
     @Test
@@ -99,9 +97,24 @@ public class OPALPluginTest {
                 "    \"date\":\"1574072773\"\n" +
                 "}");
 
-        opalPlugin.consume(topic, new ConsumerRecord<>(topic, 1, 0, "bar", emptyCGCoordinate.toString()));
+        var cg = opalPlugin.consume(new ConsumerRecord<>(topic, 1, 0, "bar", emptyCGCoordinate.toString()), false);
 
-        assertTrue(opalPlugin.lastCallGraphGenerated.isCallGraphEmpty());
+        assertTrue(cg.isCallGraphEmpty());
+    }
+
+    @Test
+    public void testFileNotFoundException() {
+        JSONObject noJARFile = new JSONObject("{\n" +
+                "    \"groupId\": \"com.visionarts\",\n" +
+                "    \"artifactId\": \"power-jambda-pom\",\n" +
+                "    \"version\": \"0.9.10\",\n" +
+                "    \"date\":\"1521511260\"\n" +
+                "}");
+
+        opalPlugin.consume(new ConsumerRecord<>(topic, 1, 0, "bar", noJARFile.toString()), false);
+
+        assertEquals(FileNotFoundException.class.getSimpleName(), opalPlugin.getPluginError());
+        assertFalse(opalPlugin.recordProcessSuccessful());
     }
 
     @Test

@@ -39,6 +39,7 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
 
     private Map<FastenURI, TypeURI> classHierarchy;
 
+
     // This is possibly the maximum number resolved calls that can be processed and sent without MemoryError.
     private static final int MAX_CALL_GRAPH_SIZE = 300000;
 
@@ -157,7 +158,7 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
     public static ExtendedRevisionCallGraph create(String forge, MavenCoordinate coordinate, long timestamp) throws FileNotFoundException, ExceededMaxCallGraphSize {
 
         logger.info("Generating call graph using Opal ...");
-        PartialCallGraph partialCallGraph = new PartialCallGraph(
+        final PartialCallGraph partialCallGraph = new PartialCallGraph(
             MavenCoordinate.MavenResolver.downloadJar(coordinate.getCoordinate()).orElseThrow(RuntimeException::new)
         );
         logger.info("Opal call graph has been generated.");
@@ -171,7 +172,7 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
 
         logger.info("Converting edges to URIs ...");
 
-        var graph = partialCallGraph.toURIGraph();
+        final var graph = partialCallGraph.toURIGraph();
 
         logger.info("All edges of the graph have been converted to URIs.");
         //logger.info("Cleaning the opal call graph from memory ...");
@@ -181,7 +182,7 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
         //logger.info("The Opal call graph has been removed from memory.");
         logger.info("Converting class hierarchy to URIs ...");
 
-        var classHierarcy = PartialCallGraph.toURIHierarchy(partialCallGraph.getClassHierarchy());
+        final var classHierarcy = PartialCallGraph.toURIHierarchy(partialCallGraph.getClassHierarchy());
 
         logger.info("All entities of the class hierarchy have been converted to URIs.");
         //logger.info("Cleaning the opal call class hierarchy from memory ...");
