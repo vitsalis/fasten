@@ -20,6 +20,7 @@ package eu.fasten.analyzer.javacgopal.data.callgraph;
 
 import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
 import eu.fasten.analyzer.javacgopal.data.TypeURI;
+import eu.fasten.analyzer.javacgopal.exceptions.ExceededMaxCallGraphSize;
 import eu.fasten.core.data.FastenURI;
 import eu.fasten.core.data.RevisionCallGraph;
 
@@ -37,6 +38,9 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
     private static Logger logger = LoggerFactory.getLogger(ExtendedRevisionCallGraph.class);
 
     private Map<FastenURI, TypeURI> classHierarchy;
+
+    // This is possibly the maximum number resolved calls that can be processed and sent without MemoryError.
+    private static final int MAX_CALL_GRAPH_SIZE = 300000;
 
     public Map<FastenURI, TypeURI> getClassHierarchy() {
         return classHierarchy;
@@ -150,13 +154,21 @@ public class ExtendedRevisionCallGraph extends RevisionCallGraph {
             PartialCallGraph.toURIHierarchy(partialCallGraph.getClassHierarchy()));
     }
 
-    public static ExtendedRevisionCallGraph create(String forge, MavenCoordinate coordinate, long timestamp) throws FileNotFoundException {
+    public static ExtendedRevisionCallGraph create(String forge, MavenCoordinate coordinate, long timestamp) throws FileNotFoundException, ExceededMaxCallGraphSize {
 
         logger.info("Generating call graph using Opal ...");
         PartialCallGraph partialCallGraph = new PartialCallGraph(
             MavenCoordinate.MavenResolver.downloadJar(coordinate.getCoordinate()).orElseThrow(RuntimeException::new)
         );
         logger.info("Opal call graph has been generated.");
+
+        logger.info("Number of calls: {}", partialCallGraph.getResolvedCalls().size() + partialCallGraph.getUnresolvedCalls().size());
+
+        if(partialCallGraph.getResolvedCalls().size() + partialCallGraph.getUnresolvedCalls().size() > MAX_CALL_GRAPH_SIZE) {
+            throw new ExceededMaxCallGraphSize(String.format("%s calls which exceeds the maximum size for a call graph.",
+                partialCallGraph.getResolvedCalls().size() + partialCallGraph.getUnresolvedCalls().size()));
+        }
+
         logger.info("Converting edges to URIs ...");
 
         var graph = partialCallGraph.toURIGraph();

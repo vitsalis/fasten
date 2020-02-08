@@ -20,6 +20,7 @@ package eu.fasten.analyzer.javacgopal;
 
 import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
 import eu.fasten.analyzer.javacgopal.data.callgraph.ExtendedRevisionCallGraph;
+import eu.fasten.analyzer.javacgopal.exceptions.ExceededMaxCallGraphSize;
 import eu.fasten.core.plugins.KafkaConsumer;
 import eu.fasten.core.plugins.KafkaProducer;
 
@@ -136,6 +137,9 @@ public class OPALPlugin extends Plugin {
                     setPluginError(e.getClass().getSimpleName());
                     logger.error("Could not download the JAR file of Maven coordinate: {}", mavenCoordinate.getCoordinate());
                     e.printStackTrace();
+                } catch (ExceededMaxCallGraphSize e) {
+                    setPluginError(e.getClass().getSimpleName());
+                    logger.error("{} : {}", e.getMessage(), mavenCoordinate.getCoordinate());
                 } catch (Exception e) {
                     setPluginError(e.getClass().getSimpleName());
                     logger.error("", e.getStackTrace());

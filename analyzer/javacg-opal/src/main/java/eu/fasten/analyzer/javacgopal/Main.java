@@ -21,6 +21,7 @@ package eu.fasten.analyzer.javacgopal;
 import eu.fasten.analyzer.javacgopal.data.MavenCoordinate;
 import eu.fasten.analyzer.javacgopal.data.callgraph.ExtendedRevisionCallGraph;
 
+import eu.fasten.analyzer.javacgopal.exceptions.ExceededMaxCallGraphSize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -101,6 +102,8 @@ public class Main implements Runnable {
         } catch (FileNotFoundException e) {
             logger.error("Could not download the JAR file of Maven coordinate: {}", mavenCoordinate.getCoordinate());
             e.printStackTrace();
+        } catch (ExceededMaxCallGraphSize e) {
+            logger.error("{}, {}", e.getMessage(), mavenCoordinate.getCoordinate());
         }
 
     }
