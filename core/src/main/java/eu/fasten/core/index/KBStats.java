@@ -54,7 +54,7 @@ public class KBStats {
 	private static Properties[] property;
 
 	public static void main(final String[] args) throws JSAPException, ClassNotFoundException, RocksDBException, IOException {
-		final SimpleJSAP jsap = new SimpleJSAP( Indexer.class.getName(),
+		final SimpleJSAP jsap = new SimpleJSAP(KBStats.class.getName(),
 				"Creates or updates a knowledge base (associated to a given database), indexing either a list of JSON files or a Kafka topic where JSON object are published",
 				new Parameter[] {
 						new FlaggedOption("gsd", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'g', "gsd", "Graph-size distribution (number of nodes  [int], one per graph, written in binary)." ),
