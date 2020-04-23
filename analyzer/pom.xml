@@ -29,6 +29,7 @@
         <module>dummy-analyzer</module>
         <module>metadata-plugin</module>
         <module>base-analyzer</module>
+        <module>restapi-plugin</module>
     </modules>
 
     <build>
